@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 
-export default function Banks() {
+export default function Banks(){
 
- const [banks, setBanks] = useState<any[]>([]);
+ const [banks,setBanks] = useState<any[]>([]);
 
- async function loadBanks() {
+ async function loadBanks(){
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=banks`
@@ -14,50 +14,68 @@ export default function Banks() {
 
   const data = await res.json();
 
-  // FIX HERE
   setBanks(data.banks);
 
  }
 
- useEffect(() => {
-
+ useEffect(()=>{
   loadBanks();
+ },[]);
 
- }, []);
-
- return (
+ return(
 
   <div>
 
-   <h1 className="text-2xl mb-6">
+   <h1 className="text-3xl font-semibold mb-6">
     Supported Banks
    </h1>
 
-   <table className="w-full border">
+   <div className="bg-[#111c34] rounded-xl border border-[#1b2a45]">
 
-    <thead>
+    <table className="w-full text-left">
 
-     <tr>
-      <th>Code</th>
-      <th>Name</th>
-     </tr>
+     <thead className="text-gray-400 text-sm border-b border-[#1b2a45]">
 
-    </thead>
+      <tr>
 
-    <tbody>
+       <th className="px-6 py-4">
+        Code
+       </th>
 
-     {banks.map((b: any) => (
+       <th className="px-6 py-4">
+        Bank Name
+       </th>
 
-      <tr key={b.code}>
-       <td>{b.code}</td>
-       <td>{b.name}</td>
       </tr>
 
-     ))}
+     </thead>
 
-    </tbody>
+     <tbody>
 
-   </table>
+      {banks.map((b:any)=>(
+
+       <tr
+        key={b.code}
+        className="border-b border-[#1b2a45] hover:bg-[#14213b]"
+       >
+
+        <td className="px-6 py-4 font-medium text-white">
+         {b.code}
+        </td>
+
+        <td className="px-6 py-4 text-gray-300">
+         {b.name}
+        </td>
+
+       </tr>
+
+      ))}
+
+     </tbody>
+
+    </table>
+
+   </div>
 
   </div>
 
