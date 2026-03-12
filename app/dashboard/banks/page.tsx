@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
 
 export default function Banks(){
 
@@ -14,7 +14,7 @@ export default function Banks(){
 
   const data = await res.json();
 
-  setBanks(data.banks || []);
+  setBanks(data);
 
  }
 
@@ -28,31 +28,25 @@ export default function Banks(){
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
+   <h1 className="text-2xl mb-6">
     Supported Banks
    </h1>
 
-   <table className="w-full border border-gray-300">
+   <table className="w-full border">
 
-    <thead className="bg-gray-100">
-
+    <thead>
      <tr>
-
-      <th className="p-2 border">Bank Code</th>
-      <th className="p-2 border">Bank Name</th>
-
+      <th>Code</th>
+      <th>Name</th>
      </tr>
-
     </thead>
 
     <tbody>
 
      {banks.map((b:any)=>(
       <tr key={b.code}>
-
-       <td className="p-2 border">{b.code}</td>
-       <td className="p-2 border">{b.name}</td>
-
+       <td>{b.code}</td>
+       <td>{b.name}</td>
       </tr>
      ))}
 
