@@ -9,7 +9,7 @@ export default function Transactions(){
  async function loadTransactions(){
 
   const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/transactions`
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=transactions`
   );
 
   const data = await res.json();

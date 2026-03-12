@@ -9,7 +9,7 @@ export default function Customers(){
  async function loadCustomers(){
 
   const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/customers`
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers`
   );
 
   const data = await res.json();

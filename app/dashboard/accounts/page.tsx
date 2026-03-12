@@ -9,7 +9,7 @@ export default function Accounts(){
  async function loadAccounts(){
 
   const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/accounts`
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=accounts`
   );
 
   const data = await res.json();

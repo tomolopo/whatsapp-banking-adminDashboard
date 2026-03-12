@@ -9,7 +9,7 @@ export default function Fraud(){
  async function loadAlerts(){
 
   const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/fraud`
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=fraud`
   );
 
   const data = await res.json();
