@@ -1,26 +1,26 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Fraud(){
 
  const [alerts,setAlerts] = useState([]);
 
- async function load(){
+ async function loadAlerts(){
 
   const res = await fetch(
-   "https://whatsapp-banking-api.vercel.app/api/admin/fraud"
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/fraud`
   );
 
   const data = await res.json();
 
-  setAlerts(data);
+  setAlerts(data.alerts || []);
 
  }
 
  useEffect(()=>{
 
-  load();
+  loadAlerts();
 
  },[]);
 
@@ -28,7 +28,7 @@ export default function Fraud(){
 
   <div>
 
-   <h1 className="text-2xl mb-6">
+   <h1 className="text-2xl font-bold mb-6">
     Fraud Alerts
    </h1>
 

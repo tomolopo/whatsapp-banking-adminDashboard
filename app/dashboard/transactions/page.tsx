@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Transactions(){
 
- const [tx,setTx] = useState([]);
+ const [transactions,setTransactions] = useState([]);
 
- async function load(){
+ async function loadTransactions(){
 
   const res = await fetch(
-   "https://whatsapp-banking-api.vercel.app/api/admin/transactions"
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin/transactions`
   );
 
   const data = await res.json();
 
-  setTx(data);
+  setTransactions(data.transactions || []);
 
  }
 
  useEffect(()=>{
 
-  load();
+  loadTransactions();
 
-  const interval = setInterval(load,5000);
+  const interval = setInterval(loadTransactions,5000);
 
   return ()=>clearInterval(interval);
 
@@ -32,21 +32,21 @@ export default function Transactions(){
 
   <div>
 
-   <h1 className="text-2xl mb-6">
+   <h1 className="text-2xl font-bold mb-6">
     Transactions
    </h1>
 
-   <table className="w-full border">
+   <table className="w-full border border-gray-300">
 
-    <thead>
+    <thead className="bg-gray-100">
 
      <tr>
 
-      <th>ID</th>
-      <th>Type</th>
-      <th>Amount</th>
-      <th>Status</th>
-      <th>Date</th>
+      <th className="p-2 border">ID</th>
+      <th className="p-2 border">Type</th>
+      <th className="p-2 border">Amount</th>
+      <th className="p-2 border">Status</th>
+      <th className="p-2 border">Date</th>
 
      </tr>
 
@@ -54,16 +54,18 @@ export default function Transactions(){
 
     <tbody>
 
-     {tx.map((t:any)=>(
+     {transactions.map((t:any)=>(
+
       <tr key={t.id}>
 
-       <td>{t.id}</td>
-       <td>{t.type}</td>
-       <td>{t.amount}</td>
-       <td>{t.status}</td>
-       <td>{t.created_at}</td>
+       <td className="p-2 border">{t.id}</td>
+       <td className="p-2 border">{t.type}</td>
+       <td className="p-2 border">₦{t.amount}</td>
+       <td className="p-2 border">{t.status}</td>
+       <td className="p-2 border">{t.created_at}</td>
 
       </tr>
+
      ))}
 
     </tbody>
