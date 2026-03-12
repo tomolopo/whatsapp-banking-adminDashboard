@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-export default function Layout({
+export default function DashboardLayout({
  children
 }:{
  children:React.ReactNode
@@ -10,39 +10,39 @@ export default function Layout({
 
  return(
 
-  <div className="flex h-screen">
+  <div className="flex min-h-screen bg-[#0b1424] text-white">
 
-   {/* Sidebar */}
+   {/* SIDEBAR */}
 
-   <div className="w-64 bg-black text-white p-6">
+   <div className="w-64 bg-[#081020] border-r border-gray-800">
 
-    <h1 className="text-xl mb-8 font-bold">
+    <div className="p-6 text-xl font-bold text-orange-500">
      Bank Admin
-    </h1>
+    </div>
 
-    <nav className="flex flex-col space-y-4">
+    <nav className="space-y-2 px-4">
 
-     <Link href="/dashboard" className="hover:text-gray-300">
+     <Link href="/dashboard" className="block p-3 rounded hover:bg-gray-800">
       Dashboard
      </Link>
 
-     <Link href="/dashboard/accounts" className="hover:text-gray-300">
+     <Link href="/dashboard/accounts" className="block p-3 rounded hover:bg-gray-800">
       Accounts
      </Link>
 
-     <Link href="/dashboard/customers" className="hover:text-gray-300">
+     <Link href="/dashboard/customers" className="block p-3 rounded hover:bg-gray-800">
       Customers
      </Link>
 
-     <Link href="/dashboard/transactions" className="hover:text-gray-300">
+     <Link href="/dashboard/transactions" className="block p-3 rounded hover:bg-gray-800">
       Transactions
      </Link>
 
-     <Link href="/dashboard/fraud" className="hover:text-gray-300">
+     <Link href="/dashboard/fraud" className="block p-3 rounded hover:bg-gray-800">
       Fraud Alerts
      </Link>
 
-     <Link href="/dashboard/banks" className="hover:text-gray-300">
+     <Link href="/dashboard/banks" className="block p-3 rounded hover:bg-gray-800">
       Banks
      </Link>
 
@@ -50,10 +50,12 @@ export default function Layout({
 
    </div>
 
-   {/* Main Content */}
+   {/* MAIN CONTENT */}
 
-   <div className="flex-1 p-10 bg-gray-50">
+   <div className="flex-1 p-8">
+
     {children}
+
    </div>
 
   </div>
