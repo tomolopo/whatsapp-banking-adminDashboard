@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Banks(){
+export default function Banks() {
 
- const [banks,setBanks] = useState([]);
+ const [banks, setBanks] = useState<any[]>([]);
 
- async function loadBanks(){
+ async function loadBanks() {
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=banks`
@@ -14,17 +14,18 @@ export default function Banks(){
 
   const data = await res.json();
 
-  setBanks(data);
+  // FIX HERE
+  setBanks(data.banks);
 
  }
 
- useEffect(()=>{
+ useEffect(() => {
 
   loadBanks();
 
- },[]);
+ }, []);
 
- return(
+ return (
 
   <div>
 
@@ -35,19 +36,23 @@ export default function Banks(){
    <table className="w-full border">
 
     <thead>
+
      <tr>
       <th>Code</th>
       <th>Name</th>
      </tr>
+
     </thead>
 
     <tbody>
 
-     {banks.map((b:any)=>(
+     {banks.map((b: any) => (
+
       <tr key={b.code}>
        <td>{b.code}</td>
        <td>{b.name}</td>
       </tr>
+
      ))}
 
     </tbody>
