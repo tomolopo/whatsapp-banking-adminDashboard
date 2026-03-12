@@ -1,68 +1,94 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react"
+import Table from "@/components/Table"
+import SearchBar from "@/components/SearchBar"
+import StatusBadge from "@/components/StatusBadge"
+import useAutoRefresh from "@/components/useAutoRefresh"
 
 export default function Fraud(){
 
- const [alerts,setAlerts] = useState([]);
+ const [alerts,setAlerts] = useState<any[]>([])
+ const [search,setSearch] = useState("")
 
- async function loadAlerts(){
+ async function load(){
 
-  const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=fraud`
-  );
+  try{
 
-  const data = await res.json();
+   const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=fraud`
+   )
 
-  setAlerts(data.alerts || []);
+   const data = await res.json()
+
+   setAlerts(data.alerts || [])
+
+  }catch(err){
+
+   console.log("Fraud API error",err)
+
+   setAlerts([])
+
+  }
 
  }
 
- useEffect(()=>{
+ useAutoRefresh(load,5000)
 
-  loadAlerts();
+ const filtered = (alerts || []).filter((a:any)=>
 
- },[]);
+  a.account_id?.toLowerCase().includes(search.toLowerCase()) ||
+  a.reason?.toLowerCase().includes(search.toLowerCase())
+
+ )
 
  return(
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
+   <h1 className="text-3xl font-semibold mb-6">
     Fraud Alerts
    </h1>
 
-   <table className="w-full border">
+   <SearchBar
+    value={search}
+    onChange={setSearch}
+    placeholder="Search alerts..."
+   />
 
-    <thead>
+   <Table headers={[
+    "Account",
+    "Reason",
+    "Severity",
+    "Date"
+   ]}>
 
-     <tr>
+    {filtered.map((a:any)=>(
+     <tr
+      key={a.id}
+      className="border-b border-[#1b2a45] hover:bg-[#14213b]"
+     >
 
-      <th>Account</th>
-      <th>Reason</th>
-      <th>Severity</th>
-      <th>Date</th>
+      <td className="px-6 py-4">
+       {a.account_id}
+      </td>
+
+      <td className="px-6 py-4 text-gray-300">
+       {a.reason}
+      </td>
+
+      <td className="px-6 py-4">
+       <StatusBadge status={a.severity}/>
+      </td>
+
+      <td className="px-6 py-4 text-gray-400">
+       {a.created_at}
+      </td>
 
      </tr>
+    ))}
 
-    </thead>
-
-    <tbody>
-
-     {alerts.map((a:any)=>(
-      <tr key={a.id}>
-
-       <td>{a.account_id}</td>
-       <td>{a.reason}</td>
-       <td>{a.severity}</td>
-       <td>{a.created_at}</td>
-
-      </tr>
-     ))}
-
-    </tbody>
-
-   </table>
+   </Table>
 
   </div>
 

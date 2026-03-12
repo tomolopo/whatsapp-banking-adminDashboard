@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
+import Table from "@/components/Table";
 
 export default function Customers(){
 
- const [customers,setCustomers] = useState([]);
+ const [customers,setCustomers] = useState<any[]>([]);
 
- async function loadCustomers(){
+ async function load(){
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers`
@@ -14,17 +15,13 @@ export default function Customers(){
 
   const data = await res.json();
 
-  setCustomers(data.customers || []);
+  setCustomers(data.customers);
 
  }
 
  useEffect(()=>{
 
-  loadCustomers();
-
-  const interval = setInterval(loadCustomers,5000);
-
-  return ()=>clearInterval(interval);
+  load();
 
  },[]);
 
@@ -32,41 +29,34 @@ export default function Customers(){
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
+   <h1 className="text-3xl font-semibold mb-6">
     Customers
    </h1>
 
-   <table className="w-full border border-gray-300">
+   <Table headers={["Name","Phone","Created"]}>
 
-    <thead className="bg-gray-100">
+    {customers.map((c:any)=>(
+     <tr
+      key={c.id}
+      className="border-b border-[#1b2a45] hover:bg-[#14213b]"
+     >
 
-     <tr>
+      <td className="px-6 py-4 font-medium text-white">
+       {c.name}
+      </td>
 
-      <th className="p-2 border">Customer ID</th>
-      <th className="p-2 border">Name</th>
-      <th className="p-2 border">Phone</th>
-      <th className="p-2 border">Created</th>
+      <td className="px-6 py-4 text-gray-300">
+       {c.phone}
+      </td>
+
+      <td className="px-6 py-4 text-gray-400">
+       {c.created_at}
+      </td>
 
      </tr>
+    ))}
 
-    </thead>
-
-    <tbody>
-
-     {customers.map((c:any)=>(
-      <tr key={c.id}>
-
-       <td className="p-2 border">{c.id}</td>
-       <td className="p-2 border">{c.name}</td>
-       <td className="p-2 border">{c.phone}</td>
-       <td className="p-2 border">{c.created_at}</td>
-
-      </tr>
-     ))}
-
-    </tbody>
-
-   </table>
+   </Table>
 
   </div>
 

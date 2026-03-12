@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect,useState } from "react";
+import Table from "@/components/Table";
 
 export default function Accounts(){
 
- const [accounts,setAccounts] = useState([]);
+ const [accounts,setAccounts] = useState<any[]>([]);
 
- async function loadAccounts(){
+ async function load(){
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=accounts`
@@ -14,17 +15,13 @@ export default function Accounts(){
 
   const data = await res.json();
 
-  setAccounts(data.accounts || []);
+  setAccounts(data.accounts);
 
  }
 
  useEffect(()=>{
 
-  loadAccounts();
-
-  const interval = setInterval(loadAccounts,5000);
-
-  return ()=>clearInterval(interval);
+  load();
 
  },[]);
 
@@ -32,41 +29,38 @@ export default function Accounts(){
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
+   <h1 className="text-3xl font-semibold mb-6">
     Accounts
    </h1>
 
-   <table className="w-full border border-gray-300">
+   <Table headers={["Account Number","User","Balance","Created"]}>
 
-    <thead className="bg-gray-100">
+    {accounts.map((a:any)=>(
+     <tr
+      key={a.id}
+      className="border-b border-[#1b2a45] hover:bg-[#14213b]"
+     >
 
-     <tr>
+      <td className="px-6 py-4 font-medium text-white">
+       {a.account_number}
+      </td>
 
-      <th className="p-2 border">Account Number</th>
-      <th className="p-2 border">User ID</th>
-      <th className="p-2 border">Balance</th>
-      <th className="p-2 border">Created</th>
+      <td className="px-6 py-4 text-gray-300">
+       {a.user_id}
+      </td>
+
+      <td className="px-6 py-4 text-gray-300">
+       ₦{a.balance}
+      </td>
+
+      <td className="px-6 py-4 text-gray-400">
+       {a.created_at}
+      </td>
 
      </tr>
+    ))}
 
-    </thead>
-
-    <tbody>
-
-     {accounts.map((a:any)=>(
-      <tr key={a.id}>
-
-       <td className="p-2 border">{a.account_number}</td>
-       <td className="p-2 border">{a.user_id}</td>
-       <td className="p-2 border">₦{a.balance}</td>
-       <td className="p-2 border">{a.created_at}</td>
-
-      </tr>
-     ))}
-
-    </tbody>
-
-   </table>
+   </Table>
 
   </div>
 

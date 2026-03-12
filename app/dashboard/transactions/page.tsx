@@ -1,76 +1,84 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react"
+import Table from "@/components/Table"
+import SearchBar from "@/components/SearchBar"
+import StatusBadge from "@/components/StatusBadge"
+import useAutoRefresh from "@/components/useAutoRefresh"
 
 export default function Transactions(){
 
- const [transactions,setTransactions] = useState([]);
+ const [transactions,setTransactions] = useState<any[]>([])
+ const [search,setSearch] = useState("")
 
- async function loadTransactions(){
+ async function load(){
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=transactions`
-  );
+  )
 
-  const data = await res.json();
+  const data = await res.json()
 
-  setTransactions(data.transactions || []);
+  setTransactions(data.transactions)
 
  }
 
- useEffect(()=>{
+ useAutoRefresh(load,5000)
 
-  loadTransactions();
+ const filtered = transactions.filter((t:any)=>
 
-  const interval = setInterval(loadTransactions,5000);
+  t.reference?.toLowerCase().includes(search.toLowerCase()) ||
+  t.status?.toLowerCase().includes(search.toLowerCase())
 
-  return ()=>clearInterval(interval);
-
- },[]);
+ )
 
  return(
 
   <div>
 
-   <h1 className="text-2xl font-bold mb-6">
+   <h1 className="text-3xl font-semibold mb-6">
     Transactions
    </h1>
 
-   <table className="w-full border border-gray-300">
+   <SearchBar
+    value={search}
+    onChange={setSearch}
+    placeholder="Search transactions..."
+   />
 
-    <thead className="bg-gray-100">
+   <Table headers={[
+    "Reference",
+    "Amount",
+    "Status",
+    "Date"
+   ]}>
 
-     <tr>
+    {filtered.map((t:any)=>(
+     <tr
+      key={t.id}
+      className="border-b border-[#1b2a45] hover:bg-[#14213b]"
+     >
 
-      <th className="p-2 border">ID</th>
-      <th className="p-2 border">Type</th>
-      <th className="p-2 border">Amount</th>
-      <th className="p-2 border">Status</th>
-      <th className="p-2 border">Date</th>
+      <td className="px-6 py-4 font-medium">
+       {t.reference}
+      </td>
+
+      <td className="px-6 py-4 text-gray-300">
+       ₦{t.amount}
+      </td>
+
+      <td className="px-6 py-4">
+       <StatusBadge status={t.status}/>
+      </td>
+
+      <td className="px-6 py-4 text-gray-400">
+       {t.created_at}
+      </td>
 
      </tr>
+    ))}
 
-    </thead>
-
-    <tbody>
-
-     {transactions.map((t:any)=>(
-
-      <tr key={t.id}>
-
-       <td className="p-2 border">{t.id}</td>
-       <td className="p-2 border">{t.type}</td>
-       <td className="p-2 border">₦{t.amount}</td>
-       <td className="p-2 border">{t.status}</td>
-       <td className="p-2 border">{t.created_at}</td>
-
-      </tr>
-
-     ))}
-
-    </tbody>
-
-   </table>
+   </Table>
 
   </div>
 
