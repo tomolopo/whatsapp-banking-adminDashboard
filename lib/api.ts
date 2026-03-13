@@ -33,5 +33,7 @@ export async function fetchBanks(){
   throw new Error("Failed to fetch banks")
  }
 
- return res.json()
+ const data = await res.json()
+
+ return data.banks || data
 }
