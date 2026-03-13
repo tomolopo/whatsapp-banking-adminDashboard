@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { fetchCustomers } from "@/lib/api"
+import { fetchCustomers } from "../../../lib/api"
 
 export default function Customers(){
 
