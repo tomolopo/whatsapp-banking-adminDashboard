@@ -1,35 +1,34 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function Customers(){
 
+ const router = useRouter()
+
  const [customers,setCustomers] = useState<any[]>([])
- const [loading,setLoading] = useState(true)
+ const [search,setSearch] = useState("")
+ const [page,setPage] = useState(1)
 
  async function loadCustomers(){
 
   const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers`
+   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers&search=${search}&page=${page}`
   )
 
   const data = await res.json()
 
   setCustomers(data.customers || [])
-  setLoading(false)
 
  }
 
  useEffect(()=>{
   loadCustomers()
- },[])
+ },[search,page])
 
 
- if(loading){
-  return <div className="p-6 text-white">Loading customers...</div>
- }
-
- return (
+ return(
 
   <div className="p-6 text-white">
 
@@ -37,19 +36,32 @@ export default function Customers(){
     Customers
    </h1>
 
+{/* SEARCH */}
+
+   <input
+    placeholder="Search customers..."
+    value={search}
+    onChange={(e)=>setSearch(e.target.value)}
+    className="mb-4 p-2 bg-slate-800 rounded w-full"
+   />
+
+{/* TABLE */}
+
    <div className="bg-[#0f172a] rounded-xl p-4">
 
-    <table className="w-full text-left">
+    <table className="w-full">
 
      <thead>
 
       <tr className="border-b border-gray-700 text-gray-400">
 
-       <th className="py-3">First Name</th>
-       <th className="py-3">Last Name</th>
-       <th className="py-3">Address</th>
-       <th className="py-3">Phone</th>
-       <th className="py-3">Created Date</th>
+       <th>First Name</th>
+       <th>Last Name</th>
+       <th>Phone</th>
+       <th>Account</th>
+       <th>Balance</th>
+       <th>Transactions</th>
+       <th>Fraud</th>
 
       </tr>
 
@@ -61,15 +73,21 @@ export default function Customers(){
 
        <tr
         key={c.id}
-        className="border-b border-gray-800 hover:bg-[#1e293b]"
+        className="border-b border-gray-800 hover:bg-[#1e293b] cursor-pointer"
+        onClick={()=>router.push(`/dashboard/customers/${c.id}`)}
        >
 
-        <td className="py-3">{c.first_name}</td>
-        <td className="py-3">{c.last_name}</td>
-        <td className="py-3">{c.address}</td>
-        <td className="py-3">{c.phone}</td>
-        <td className="py-3">
-         {new Date(c.created_at).toLocaleDateString()}
+        <td>{c.first_name}</td>
+        <td>{c.last_name}</td>
+        <td>{c.phone}</td>
+        <td>{c.account_number || "-"}</td>
+        <td>₦{c.balance || 0}</td>
+        <td>{c.transaction_count}</td>
+
+        <td>
+         {c.has_fraud_flag
+          ? <span className="text-red-500">⚠️</span>
+          : "—"}
         </td>
 
        </tr>
@@ -79,6 +97,29 @@ export default function Customers(){
      </tbody>
 
     </table>
+
+   </div>
+
+{/* PAGINATION */}
+
+   <div className="flex gap-4 mt-6">
+
+    <button
+     onClick={()=>setPage(page-1)}
+     disabled={page === 1}
+     className="px-4 py-2 bg-slate-800 rounded"
+    >
+     Previous
+    </button>
+
+    <span>Page {page}</span>
+
+    <button
+     onClick={()=>setPage(page+1)}
+     className="px-4 py-2 bg-slate-800 rounded"
+    >
+     Next
+    </button>
 
    </div>
 
