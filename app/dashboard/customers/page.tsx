@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { fetchCustomers } from "../../../lib/api"
+import { fetchCustomers } from "@/lib/api"
 
 export default function Customers(){
 
@@ -13,7 +13,8 @@ export default function Customers(){
 
   const data = await fetchCustomers(search,page)
 
-  setCustomers(data)
+  // FIX: read the array inside the response
+  setCustomers(data.customers || [])
 
  }
 
@@ -28,7 +29,7 @@ export default function Customers(){
 
  <div>
 
-  <h1 className="text-2xl font-bold mb-4">
+  <h1 className="text-2xl font-bold mb-6">
    Customers
   </h1>
 
@@ -44,6 +45,7 @@ export default function Customers(){
   <table className="w-full text-left">
 
    <thead>
+
     <tr>
      <th>First Name</th>
      <th>Last Name</th>
@@ -52,19 +54,25 @@ export default function Customers(){
      <th>Balance</th>
      <th>Transactions</th>
     </tr>
+
    </thead>
 
    <tbody>
 
     {customers.map((c:any)=>(
-
+     
      <tr key={c.id}>
 
       <td>{c.first_name}</td>
       <td>{c.last_name}</td>
       <td>{c.phone}</td>
+
       <td>{c.account_number || "-"}</td>
-      <td>{c.balance || 0}</td>
+
+      <td>
+       {c.balance !== null ? `₦${c.balance}` : "-"}
+      </td>
+
       <td>{c.transaction_count}</td>
 
      </tr>
