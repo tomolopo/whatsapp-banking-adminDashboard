@@ -11,10 +11,17 @@ export default function Customers(){
 
  async function loadCustomers(){
 
-  const data = await fetchCustomers(search,page)
+  try{
 
-  // FIX: read the array inside the response
-  setCustomers(data.customers || [])
+   const data = await fetchCustomers(search,page)
+
+   setCustomers(data)
+
+  }catch(err){
+
+   console.error("Failed loading customers",err)
+
+  }
 
  }
 
@@ -33,7 +40,6 @@ export default function Customers(){
    Customers
   </h1>
 
-
   <input
    placeholder="Search customers..."
    value={search}
@@ -41,11 +47,9 @@ export default function Customers(){
    className="w-full p-3 mb-6 rounded bg-slate-800"
   />
 
-
   <table className="w-full text-left">
 
    <thead>
-
     <tr>
      <th>First Name</th>
      <th>Last Name</th>
@@ -54,10 +58,17 @@ export default function Customers(){
      <th>Balance</th>
      <th>Transactions</th>
     </tr>
-
    </thead>
 
    <tbody>
+
+    {customers.length === 0 && (
+
+     <tr>
+      <td colSpan={6}>No customers found</td>
+     </tr>
+
+    )}
 
     {customers.map((c:any)=>(
      
@@ -83,12 +94,11 @@ export default function Customers(){
 
   </table>
 
-
   <div className="flex gap-4 mt-6">
 
    <button
     onClick={()=>setPage(page-1)}
-    disabled={page===1}
+    disabled={page === 1}
    >
     Previous
    </button>
@@ -102,7 +112,6 @@ export default function Customers(){
    </button>
 
   </div>
-
 
  </div>
 

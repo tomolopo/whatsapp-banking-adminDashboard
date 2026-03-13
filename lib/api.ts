@@ -16,7 +16,9 @@ export async function fetchCustomers(
   throw new Error("Failed to fetch customers")
  }
 
- return res.json()
+ const data = await res.json()
+
+ return data.customers || []
 }
 
 
