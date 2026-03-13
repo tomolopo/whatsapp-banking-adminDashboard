@@ -1,11 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { fetchCustomers } from "@/lib/api"
 
 export default function Customers(){
-
- const router = useRouter()
 
  const [customers,setCustomers] = useState<any[]>([])
  const [search,setSearch] = useState("")
@@ -13,117 +11,92 @@ export default function Customers(){
 
  async function loadCustomers(){
 
-  const res = await fetch(
-   `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers&search=${search}&page=${page}`
-  )
+  const data = await fetchCustomers(search,page)
 
-  const data = await res.json()
-
-  setCustomers(data.customers || [])
+  setCustomers(data)
 
  }
 
  useEffect(()=>{
+
   loadCustomers()
- },[search,page])
+
+ },[page])
 
 
- return(
+ return (
 
-  <div className="p-6 text-white">
+ <div>
 
-   <h1 className="text-2xl font-semibold mb-6">
-    Customers
-   </h1>
+  <h1 className="text-2xl font-bold mb-4">
+   Customers
+  </h1>
 
-{/* SEARCH */}
 
-   <input
-    placeholder="Search customers..."
-    value={search}
-    onChange={(e)=>setSearch(e.target.value)}
-    className="mb-4 p-2 bg-slate-800 rounded w-full"
-   />
+  <input
+   placeholder="Search customers..."
+   value={search}
+   onChange={(e)=>setSearch(e.target.value)}
+   className="w-full p-3 mb-6 rounded bg-slate-800"
+  />
 
-{/* TABLE */}
 
-   <div className="bg-[#0f172a] rounded-xl p-4">
+  <table className="w-full text-left">
 
-    <table className="w-full">
+   <thead>
+    <tr>
+     <th>First Name</th>
+     <th>Last Name</th>
+     <th>Phone</th>
+     <th>Account</th>
+     <th>Balance</th>
+     <th>Transactions</th>
+    </tr>
+   </thead>
 
-     <thead>
+   <tbody>
 
-      <tr className="border-b border-gray-700 text-gray-400">
+    {customers.map((c:any)=>(
 
-       <th>First Name</th>
-       <th>Last Name</th>
-       <th>Phone</th>
-       <th>Account</th>
-       <th>Balance</th>
-       <th>Transactions</th>
-       <th>Fraud</th>
+     <tr key={c.id}>
 
-      </tr>
+      <td>{c.first_name}</td>
+      <td>{c.last_name}</td>
+      <td>{c.phone}</td>
+      <td>{c.account_number || "-"}</td>
+      <td>{c.balance || 0}</td>
+      <td>{c.transaction_count}</td>
 
-     </thead>
+     </tr>
 
-     <tbody>
+    ))}
 
-      {customers.map((c:any)=>(
+   </tbody>
 
-       <tr
-        key={c.id}
-        className="border-b border-gray-800 hover:bg-[#1e293b] cursor-pointer"
-        onClick={()=>router.push(`/dashboard/customers/${c.id}`)}
-       >
+  </table>
 
-        <td>{c.first_name}</td>
-        <td>{c.last_name}</td>
-        <td>{c.phone}</td>
-        <td>{c.account_number || "-"}</td>
-        <td>₦{c.balance || 0}</td>
-        <td>{c.transaction_count}</td>
 
-        <td>
-         {c.has_fraud_flag
-          ? <span className="text-red-500">⚠️</span>
-          : "—"}
-        </td>
+  <div className="flex gap-4 mt-6">
 
-       </tr>
+   <button
+    onClick={()=>setPage(page-1)}
+    disabled={page===1}
+   >
+    Previous
+   </button>
 
-      ))}
+   <span>Page {page}</span>
 
-     </tbody>
-
-    </table>
-
-   </div>
-
-{/* PAGINATION */}
-
-   <div className="flex gap-4 mt-6">
-
-    <button
-     onClick={()=>setPage(page-1)}
-     disabled={page === 1}
-     className="px-4 py-2 bg-slate-800 rounded"
-    >
-     Previous
-    </button>
-
-    <span>Page {page}</span>
-
-    <button
-     onClick={()=>setPage(page+1)}
-     className="px-4 py-2 bg-slate-800 rounded"
-    >
-     Next
-    </button>
-
-   </div>
+   <button
+    onClick={()=>setPage(page+1)}
+   >
+    Next
+   </button>
 
   </div>
+
+
+ </div>
 
  )
 
