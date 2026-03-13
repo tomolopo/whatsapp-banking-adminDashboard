@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { fetchBanks } from "@/lib/api"
+import { fetchBanks } from "../../../lib/api"
 
 export default function Banks(){
 
