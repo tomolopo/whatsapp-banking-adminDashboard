@@ -1,62 +1,86 @@
-"use client";
+"use client"
 
-import { useEffect,useState } from "react";
-import Table from "@/components/Table";
+import { useEffect, useState } from "react"
 
 export default function Customers(){
 
- const [customers,setCustomers] = useState<any[]>([]);
+ const [customers,setCustomers] = useState<any[]>([])
+ const [loading,setLoading] = useState(true)
 
- async function load(){
+ async function loadCustomers(){
 
   const res = await fetch(
    `${process.env.NEXT_PUBLIC_API_URL}/api/admin?resource=customers`
-  );
+  )
 
-  const data = await res.json();
+  const data = await res.json()
 
-  setCustomers(data.customers);
+  setCustomers(data.customers || [])
+  setLoading(false)
 
  }
 
  useEffect(()=>{
+  loadCustomers()
+ },[])
 
-  load();
 
- },[]);
+ if(loading){
+  return <div className="p-6 text-white">Loading customers...</div>
+ }
 
- return(
+ return (
 
-  <div>
+  <div className="p-6 text-white">
 
-   <h1 className="text-3xl font-semibold mb-6">
+   <h1 className="text-2xl font-semibold mb-6">
     Customers
    </h1>
 
-   <Table headers={["Name","Phone","Created"]}>
+   <div className="bg-[#0f172a] rounded-xl p-4">
 
-    {customers.map((c:any)=>(
-     <tr
-      key={c.id}
-      className="border-b border-[#1b2a45] hover:bg-[#14213b]"
-     >
+    <table className="w-full text-left">
 
-      <td className="px-6 py-4 font-medium text-white">
-       {c.name}
-      </td>
+     <thead>
 
-      <td className="px-6 py-4 text-gray-300">
-       {c.phone}
-      </td>
+      <tr className="border-b border-gray-700 text-gray-400">
 
-      <td className="px-6 py-4 text-gray-400">
-       {c.created_at}
-      </td>
+       <th className="py-3">First Name</th>
+       <th className="py-3">Last Name</th>
+       <th className="py-3">Address</th>
+       <th className="py-3">Phone</th>
+       <th className="py-3">Created Date</th>
 
-     </tr>
-    ))}
+      </tr>
 
-   </Table>
+     </thead>
+
+     <tbody>
+
+      {customers.map((c:any)=>(
+
+       <tr
+        key={c.id}
+        className="border-b border-gray-800 hover:bg-[#1e293b]"
+       >
+
+        <td className="py-3">{c.first_name}</td>
+        <td className="py-3">{c.last_name}</td>
+        <td className="py-3">{c.address}</td>
+        <td className="py-3">{c.phone}</td>
+        <td className="py-3">
+         {new Date(c.created_at).toLocaleDateString()}
+        </td>
+
+       </tr>
+
+      ))}
+
+     </tbody>
+
+    </table>
+
+   </div>
 
   </div>
 
